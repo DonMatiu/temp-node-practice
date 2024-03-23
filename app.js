@@ -1,17 +1,21 @@
+console.clear();
+const { error } = require('console');
 const fs = require('fs');
+const http = require('http');
 
-async function mergeTexts(mergePath) {
-  try {
-    const data1 = await fs.promises.readFile('./content/first.txt', 'utf8');
-    console.log(data1);
-    const data2 = await fs.promises.readFile('./content/second.txt', 'utf8');
-    console.log(data2);
-    await fs.promises.writeFile(mergePath, `Combined Powers: ${data1} : ${data2}`);
-    const mergedData = await fs.promises.readFile(mergePath, 'utf8');
-    console.log(mergedData);
-  } catch (error) {
-    console.error(error);
-  }
-}
+const server = http.createServer();
 
-mergeTexts('./content/COMBOTRON3000.txt');
+server.on('request', function (req, res) {
+  const fileStream = fs.createReadStream('./content/bigtext.txt', {
+    highWaterMark: 10,
+    encoding: 'utf8',
+  });
+  fileStream.on('open', function () {
+    fileStream.pipe(res);
+  });
+  fileStream.on('error', function () {
+    res.end(error);
+  });
+});
+
+server.listen(3000);
