@@ -1,18 +1,17 @@
-const http = require('http');
+const fs = require('fs');
 
-console.log('tasdasdfest');
-const server = http.createServer((req, res) => {
-  if (req.url === '/') {
-    res.end('Welcome to our home page');
-  } else if (req.url === '/about') {
-    res.end('Here is our short history');
-  } else {
-    res.end(`
-    <h1>Oops!</h1>
-    <p>We can't seem to find the page you are looking for</p>
-    <a href="/">back home</a>
-    `);
+async function mergeTexts(mergePath) {
+  try {
+    const data1 = await fs.promises.readFile('./content/first.txt', 'utf8');
+    console.log(data1);
+    const data2 = await fs.promises.readFile('./content/second.txt', 'utf8');
+    console.log(data2);
+    await fs.promises.writeFile(mergePath, `Combined Powers: ${data1} : ${data2}`);
+    const mergedData = await fs.promises.readFile(mergePath, 'utf8');
+    console.log(mergedData);
+  } catch (error) {
+    console.error(error);
   }
-});
+}
 
-server.listen(5000);
+mergeTexts('./content/COMBOTRON3000.txt');
